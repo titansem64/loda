@@ -1,0 +1,51 @@
+name: Continuous Increment
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:  # Automatically triggers when the previous workflow commits
+    branches:
+      - main
+
+permissions:
+  contents: write  # Allow GitHub Actions to push changes
+
+jobs:
+  append_increment:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Continuous increment for 5 hours (runs every 12 minutes)
+      - name: Continuous Increment for 5 Hours
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Run the increment loop for 5 hours (300 minutes)
+          for ((i=1; i<=25; i++)); do
+            # Pull the latest changes
+            git pull origin main --rebase
+
+            # Get the last number from hello.txt or start with 0 if the file doesn't exist
+            LAST_NUMBER=$(tail -n 1 hello.txt 2>/dev/null || echo "0")
+            if [[ ! $LAST_NUMBER =~ ^[0-9]+$ ]]; then
+              LAST_NUMBER=0
+            fi
+
+            # Increment the number
+            NEW_NUMBER=$((LAST_NUMBER + 1))
+
+            # Append the new number to hello.txt
+            echo $NEW_NUMBER >> hello.txt
+
+            # Commit and push the change
+            git add hello.txt
+            git commit -m "Append number $NEW_NUMBER"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/titansem64/loda.git
+
+            # Sleep for 12 minutes
+            sleep 720
+          done
