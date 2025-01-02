@@ -1,0 +1,25 @@
+name: Schedule Continuous Increment
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # Every 4 hours
+
+permissions:
+  contents: write  # Necessary for triggering workflows
+
+jobs:
+  trigger_workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Trigger the Continuous Increment workflow
+      - name: Trigger Continuous Increment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'continuous-increment.yml',  // Name of the target workflow file
+              ref: 'main',  // The branch to trigger the workflow on
+            });
